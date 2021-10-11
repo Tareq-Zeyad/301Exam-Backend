@@ -23,7 +23,7 @@ server.get('/', homeHandler);
 server.get('/getFruits', GetFruitDataHandler);
 server.post('/addToFavorites', AddToFavHandler);
 server.get('/getFavoriteFruits', GetFavFruitsData);
-server.delete('/deleteItem/:id', DeleteItemHandler);
+server.delete('/deleteItem/:id/:email', DeleteItemHandler);
 server.put('/updateFavFruit/:id', UpdateFavItems);
 
 main().catch(err => {
@@ -31,8 +31,8 @@ main().catch(err => {
 });
 
 async function main() {
-    await mongoose.connect('mongodb://localhost:27017/301Exam');
-    //   await mongoose.connect('mongodb://FruitsBasket:1996@amg@cluster0-shard-00-00.dpyre.mongodb.net:27017,cluster0-shard-00-01.dpyre.mongodb.net:27017,cluster0-shard-00-02.dpyre.mongodb.net:27017/301Exam?ssl=true&replicaSet=atlas-a6ifku-shard-0&authSource=admin&retryWrites=true&w=majority');
+    // await mongoose.connect('mongodb://localhost:27017/301Exam');
+      await mongoose.connect('mongodb://FruitsBasket:199624@cluster0-shard-00-00.dpyre.mongodb.net:27017,cluster0-shard-00-01.dpyre.mongodb.net:27017,cluster0-shard-00-02.dpyre.mongodb.net:27017/FruitsBasket?ssl=true&replicaSet=atlas-a6ifku-shard-0&authSource=admin&retryWrites=true&w=majority');
 
 
     const FruitSchema = new Schema({
@@ -103,8 +103,23 @@ function GetFavFruitsData(req, res) {
 
 function DeleteItemHandler(req, res) {
     const id = req.params.id;
+    const email = req.params.email;
 
+    // const { email } = req.body;
+
+    console.log('from server side',id,email);
     Modelfruits.deleteOne({ _id: id }, (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            
+            
+        }
+    })
+    Modelfruits.find({ email: email }, (err, result) => {
+        // console.log(userEmail);
+
         if (err) {
             console.log(err);
         }
@@ -118,12 +133,12 @@ function UpdateFavItems(req, res) {
     const id = req.params.id;
 
     // structuring
-    const { fruitName, fruitPrice, email } = req.body;
+    const { fruitName, fruitPrice, fruitImage, email } = req.body;
 
-    Modelfruits.findByIdAndUpdate(id, { name: fruitName, price: fruitPrice }, (err, result) => {
+    Modelfruits.findByIdAndUpdate(id, { name: fruitName, price: fruitPrice, photo: fruitImage }, (err, result) => {
 
-        Modelfruits.find({ email: userEmail }, (err, result) => {
-            console.log(userEmail);
+        Modelfruits.find({ email: email }, (err, result) => {
+            console.log(email);
 
             if (err) {
                 console.log(err);
